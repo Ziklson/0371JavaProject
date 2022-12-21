@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="API" options="--add-modules java.base" />
+      <module name="Client" options="--add-modules java.base" />
+      <module name="ProjectX" options="--add-modules java.base,java.sql" />
+      <module name="Server" options="--add-modules java.base,java.sql" />
+    </option>
+  </component>
+</project>
