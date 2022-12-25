@@ -29,4 +29,7 @@ public class PersonsListModel extends AbstractListModel {
         Person removePerson = list.remove(index);
         fireIntervalRemoved(removePerson, index, index);
     }
+    public void clearPerson(){
+        list.clear();
+    }
 }

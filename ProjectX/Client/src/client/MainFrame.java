@@ -17,7 +17,7 @@ public class MainFrame extends JFrame {
 
         setLayout(new BorderLayout());
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Расписание", new JButton("Расписание")); //todo дописать панель Расписание
+        tabbedPane.addTab("Расписание", new WorkoutsPane()); //todo дописать панель Расписание
         tabbedPane.addTab("База", new DataPane());
 
         add(tabbedPane);

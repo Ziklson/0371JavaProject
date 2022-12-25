@@ -11,12 +11,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class PersonsListPane extends JPanel {
-    public PersonsListPane() {
+    private List<Person> allPersons= null;
+    private PersonsListModel personsListModel = new PersonsListModel();
+    private JList<Person> list = new JList<>(personsListModel);
+
+
+
+    public PersonsListPane(PersonPane personPane) {
         super(new BorderLayout());
         JButton addButton = new JButton("Добавить");
         JButton delButton = new JButton("Удалить");
-        PersonsListModel personsListModel = new PersonsListModel();
-        JList<Person> list = new JList<>(personsListModel);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
         list.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -29,17 +36,39 @@ public class PersonsListPane extends JPanel {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String name = JOptionPane.showInputDialog(
+                JTextField name=  new JTextField();
+                JTextField phone=new JTextField();
+                Object[] message={
+                        "Введите ФИО:", name,
+                        "Введите Телефон:", phone
+                };
+
+              int dialogResult=JOptionPane.showConfirmDialog(
                         PersonsListPane.this,
-                        "Введите ФИО",
+                        message,
                         "Создание",
+                        JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.PLAIN_MESSAGE);
-                if (name != null) {
-                    Person person = new Person();
-                    person.setName(name);
-                    personsListModel.addPerson(person);
-                    //todo add Horse
-                }
+              if(dialogResult == 0) // OK option
+              {
+                  if (!name.getText().trim().isEmpty() & !phone.getText().trim().isEmpty()) {
+                      Person person = new Person();
+                      person.setName(name.getText());
+                      person.setPhone(phone.getText());
+                      personsListModel.addPerson(person);
+                      try {
+                         ServiceManager.getInstance().getTestService().addPerson(person);
+                      } catch (ConnectionException er) {
+                          er.printStackTrace();
+                      }
+                      updPersonsListPane();
+                      //todo add Person
+                  }
+                  else{
+
+                  }
+              }
+
             }
         });
 
@@ -47,7 +76,15 @@ public class PersonsListPane extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedIndex = list.getSelectedIndex();
+                Person selectedPerson=list.getSelectedValue();
                 personsListModel.deletePerson(selectedIndex);
+                personPane.hideFields();
+                try {
+                    ServiceManager.getInstance().getTestService().delPerson(selectedPerson);
+                } catch (ConnectionException er) {
+                    er.printStackTrace();
+                }
+
             }
         });
 
@@ -55,22 +92,30 @@ public class PersonsListPane extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(e.getClickCount()==2){
-                    Object selectedValue = list.getSelectedValue();
-                    // todo   - переправить Объект в HorsePanel
-
+                    Person selectedPerson = list.getSelectedValue();
+                    personPane.setPerson(selectedPerson);
+                    // todo   - переправить Объект в PersonsPane
                 }
             }
         });
 
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(addButton);
         buttonPanel.add(delButton);
 
         add(buttonPanel, BorderLayout.NORTH);
         add(list, BorderLayout.CENTER);
+        updPersonsListPane();
 
-        List<Person> allPersons= null;
+        personPane.setPersonsListPane(this);
+    }
+
+
+
+    void updPersonsListPane() {
+        if (personsListModel.getSize() != 0){
+            personsListModel.clearPerson();
+        }
         try {
             allPersons = ServiceManager.getInstance().getTestService().getAllPerson();
         } catch (ConnectionException e) {
@@ -78,7 +123,9 @@ public class PersonsListPane extends JPanel {
         }
         for (Person person: allPersons) {
             personsListModel.addPerson(person);
-
         }
     }
+
+
+
 }

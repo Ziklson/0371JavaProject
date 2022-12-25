@@ -8,9 +8,9 @@ public class DataPane extends JPanel {
         super();
         setLayout(new BorderLayout());
         JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.LEFT);
-        tabbedPane.addTab("Актёры", new PersonsPane());
-        tabbedPane.addTab("Тренеры", new JButton("Тренеры")); //todo дописать панель Тренеры
-        tabbedPane.addTab("Клиенты", new JButton("Клиенты")); //todo дописать панель Клиенты
+        tabbedPane.addTab("Клиенты", new PersonsPane());
+        tabbedPane.addTab("Инструкторы", new InstructorsPane()); //todo дописать панель Инструкторы
+        tabbedPane.addTab("Автомобили", new CarsPane()); //todo дописать панель Автомобили
         add(tabbedPane);
     }
 }
