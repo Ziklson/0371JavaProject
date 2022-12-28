@@ -75,7 +75,6 @@ public class InstructorPane extends JPanel {
                         }
                         if(textCategory.getText().trim().isEmpty()){
                             textCategory.setBackground(new Color(255,92,124,50));
-
                         }
                     }
 

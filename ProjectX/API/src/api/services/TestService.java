@@ -60,6 +60,10 @@ public interface TestService {
 
     List<String> getAllDates();
 
+    void addWorkout(Workout workout);
+
+    void delWorkout(Workout workout);
+
 
 
 

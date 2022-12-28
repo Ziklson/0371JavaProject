@@ -21,7 +21,8 @@ public class CalendarPane extends JPanel {
     private WorkoutsListPane workoutsListPane;
     List<String> allDates=new ArrayList<>();
     private Color defaultColor=new JButton().getBackground();
-
+    private Cell lastCellPressed=null;
+    private Color lastCellPressedColor=null;
 
 
     public CalendarPane(int month, int year, WorkoutsListPane workoutsListPane){
@@ -29,6 +30,7 @@ public class CalendarPane extends JPanel {
         this.workoutsListPane=workoutsListPane;
         this.month=month;
         this.year=year;
+
         GridBagLayout layout = new GridBagLayout();
         setLayout(layout);
         GridBagConstraints c = new GridBagConstraints();
@@ -56,7 +58,8 @@ public class CalendarPane extends JPanel {
                     setMonth(curMonth-1);
                 }
                 cells.get(1).setText(getTitle());
-
+                lastCellPressed=null;
+                lastCellPressedColor=null;
                 setDate();
             }
         });
@@ -81,6 +84,8 @@ public class CalendarPane extends JPanel {
                     setMonth(curMonth+1);
                 }
                 cells.get(1).setText(getTitle());
+                lastCellPressed=null;
+                lastCellPressedColor=null;
                 setDate();
             }
         });
@@ -147,7 +152,7 @@ public class CalendarPane extends JPanel {
     public String getTitle(){
         return this.months[month] + " " + this.year;
     }
-    private void setDate(){
+    public void setDate(){
         try {
             allDates=ServiceManager.getInstance().getTestService().getAllDates();
         } catch (ConnectionException e) {
@@ -200,9 +205,25 @@ public class CalendarPane extends JPanel {
                 if(!allDates.isEmpty()){
                     if(allDates.contains(curDate)){
                         cell.setBackground(new Color(156,255,173));
+                        if(cell == lastCellPressed){
+                            lastCellPressedColor=cell.getBackground();
+                            cell.setBackground(new Color(96, 182, 168));
+
+                        }
                     }
                     else{
                         cell.setBackground(defaultColor);
+                        if(cell == lastCellPressed){
+                            lastCellPressedColor=cell.getBackground();
+                            cell.setBackground(new Color(96, 182, 168));
+                        }
+                    }
+                }
+                else{
+                    cell.setBackground(defaultColor);
+                    if(cell == lastCellPressed){
+                        lastCellPressedColor=cell.getBackground();
+                        cell.setBackground(new Color(96, 182, 168));
                     }
                 }
                 if(calendar.get(Calendar.MONTH)==month){
@@ -214,6 +235,19 @@ public class CalendarPane extends JPanel {
                             public void actionPerformed(ActionEvent e) {
                                 int curMonth = month + 1; // For table month starts with 1, not with 0
                                 String curDate = year + "-" + curMonth + "-" + cell.getText();
+                                workoutsListPane.setCurDate(curDate);
+                                if(lastCellPressed != null){
+                                    lastCellPressed.setBackground(lastCellPressedColor);
+                                    lastCellPressedColor=cell.getBackground();
+                                    lastCellPressed=cell;
+                                }
+                                if(lastCellPressed == null) {
+                                    lastCellPressed=cell;
+                                    lastCellPressedColor=cell.getBackground();
+                                }
+                                cell.setBackground(new Color(96, 182, 168));
+
+
                                 System.out.println(curDate);
                             try {
                                 workoutByDate=ServiceManager.getInstance().getTestService().getWorkoutByDate(curDate);
@@ -241,5 +275,17 @@ public class CalendarPane extends JPanel {
             }
         }
 
+    }
+
+    public List<Workout> getWorkoutByDate() {
+        return workoutByDate;
+    }
+
+    public void updWorkoutByDate(String curDate) {
+        try {
+            workoutByDate=ServiceManager.getInstance().getTestService().getWorkoutByDate(curDate);
+        } catch (ConnectionException ex) {
+            ex.printStackTrace();
+        }
     }
 }

@@ -7,6 +7,8 @@ import api.data.Workout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class WorkoutPane extends JPanel {
     private String nameClient;
@@ -19,6 +21,9 @@ public class WorkoutPane extends JPanel {
     private Instructor instructor;
     private Car car;
     private Workout workout;
+    private JButton delButton= new JButton("Удалить");
+    private CalendarPane calendarPane;
+    private WorkoutsListPane workoutsListPane;
 
     public WorkoutPane(Person person,Instructor instructor, Car car, Workout workout){
         this.person=person;
@@ -44,8 +49,6 @@ public class WorkoutPane extends JPanel {
         setBackground(new Color(216,237,255));
         c.gridx=0;
         c.gridy=0;
-       // c.anchor=GridBagConstraints.NORTHWEST;
-     //   c.fill=GridBagConstraints.BOTH;
         add(labelClient,c);
         c.gridy=1;
         add(labelInstructor,c);
@@ -57,6 +60,34 @@ public class WorkoutPane extends JPanel {
         add(labelTimeStart,c);
         c.gridy=5;
         add(labelDuration,c);
+        c.gridy=6;
+        c.anchor=GridBagConstraints.SOUTH;
+        add(delButton,c);
+
+        delButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int dialogResult=JOptionPane.showConfirmDialog(
+                        null,
+                        "Вы действительно хотите удалить запись?",
+                        "Удаление",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE);
+                if(dialogResult == 0){
+                    try{
+                        ServiceManager.getInstance().getTestService().delWorkout(workout);
+                        calendarPane.setDate();
+                        calendarPane.updWorkoutByDate(calendarPane.getWorkoutByDate().get(0).getDate().split(" ")[0]);
+                        calendarPane.getWorkoutsListPane().updWorkouts(calendarPane.getWorkoutByDate());
+
+
+                    } catch (ConnectionException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
+
     }
     public void setWorkout(){
         nameClient=person.getName();
@@ -67,4 +98,10 @@ public class WorkoutPane extends JPanel {
         duration=workout.getDuration();
     }
 
+    public void setCalendarPane(CalendarPane calendarPane) {
+        this.calendarPane = calendarPane;
+    }
+    public void setWorkoutsListPane(WorkoutsListPane workoutsListPane){
+        this.workoutsListPane=workoutsListPane;
+    }
 }

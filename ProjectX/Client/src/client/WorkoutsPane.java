@@ -22,6 +22,7 @@ public class WorkoutsPane extends JPanel {
         year=calendar.get(Calendar.YEAR);
         workoutsListPane=new WorkoutsListPane();
         calendarPane=new CalendarPane(month,year,workoutsListPane);
+        workoutsListPane.setCalendarPane(calendarPane);
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, workoutsListPane, calendarPane);
         splitPane.setDividerLocation(290);
         splitPane.addPropertyChangeListener("dividerLocation", new PropertyChangeListener()

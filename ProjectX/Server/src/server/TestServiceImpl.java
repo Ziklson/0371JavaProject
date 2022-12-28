@@ -120,5 +120,16 @@ public class TestServiceImpl extends HessianServlet implements TestService {
     public List<String> getAllDates(){
         return DataManager.getAllDates();
     }
+
+    @Override
+    public void addWorkout(Workout workout){
+        DataManager.addWorkout(workout);
+    }
+
+    @Override
+    public void delWorkout(Workout workout){
+        DataManager.delWorkout(workout);
+    }
+
 }
 

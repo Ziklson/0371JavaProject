@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataManager {
+    // клиенты
     public static Person getPersonById(String id){
         Person person = new Person();
         try {
@@ -342,7 +343,10 @@ public class DataManager {
             System.out.println(e.getMessage());
         }
     }
+
     // Расписание
+
+
     public static List<Workout> getWorkoutByDate(String date){
         ArrayList<Workout> workouts = new ArrayList<>();
         try {
@@ -378,7 +382,6 @@ public class DataManager {
         }
         return workouts;
     }
-
     public static List<String> getAllDates(){
         List<String> allDates= new ArrayList<>();
         try {
@@ -402,7 +405,41 @@ public class DataManager {
         }
         return allDates;
     }
+    public static void addWorkout(Workout workout){
+        try {
+            try {
+                Class.forName("org.postgresql.Driver");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            Statement stmt = conn.createStatement();
+            String sql="INSERT INTO workout(client_id,instructor_id,car_id,date_workout,duration_workout) VALUES "+ "('"
+                    +workout.getClientId() +"','"+workout.getInstructorId()+"','"
+                    +workout.getCarId()+"','"+workout.getDate()+"','"+workout.getDuration()+"');";
+            int result=stmt.executeUpdate(sql);
+        }
+        catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    public static void delWorkout(Workout workout){
+        try {
+            try {
+                Class.forName("org.postgresql.Driver");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            Statement stmt = conn.createStatement();
+            String sql="DELETE FROM workout WHERE workout_id="+workout.getId();
+            int result=stmt.executeUpdate(sql);
+        }
+        catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
 
+    }
 }
 
 
